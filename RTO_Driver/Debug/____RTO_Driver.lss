@@ -1,0 +1,715 @@
+
+____RTO_Driver.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000042a  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          00000044  00800060  00800060  0000049e  2**0
+                  ALLOC
+  2 .stab         00000804  00000000  00000000  000004a0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  3 .stabstr      0000087c  00000000  00000000  00000ca4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   8:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  10:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  14:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  18:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  1c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  20:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  24:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  28:	0c 94 b0 01 	jmp	0x360	; 0x360 <__vector_10>
+  2c:	0c 94 dd 01 	jmp	0x3ba	; 0x3ba <__vector_11>
+  30:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  34:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  38:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  3c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  40:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  44:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  48:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  4c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  50:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_clear_bss>:
+  60:	10 e0       	ldi	r17, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	01 c0       	rjmp	.+2      	; 0x6a <.do_clear_bss_start>
+
+00000068 <.do_clear_bss_loop>:
+  68:	1d 92       	st	X+, r1
+
+0000006a <.do_clear_bss_start>:
+  6a:	a4 3a       	cpi	r26, 0xA4	; 164
+  6c:	b1 07       	cpc	r27, r17
+  6e:	e1 f7       	brne	.-8      	; 0x68 <.do_clear_bss_loop>
+  70:	0e 94 0a 02 	call	0x414	; 0x414 <main>
+  74:	0c 94 13 02 	jmp	0x426	; 0x426 <_exit>
+
+00000078 <__bad_interrupt>:
+  78:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000007c <RTO_vidInit>:
+/* Create Array Of Pointer To Struct To Refer For Our Tasks */
+Task_Type* apstrTaskArray[MAXIMUM_TASKS];
+
+
+void RTO_vidInit(void)
+{
+  7c:	df 93       	push	r29
+  7e:	cf 93       	push	r28
+  80:	0f 92       	push	r0
+  82:	cd b7       	in	r28, 0x3d	; 61
+  84:	de b7       	in	r29, 0x3e	; 62
+	u8 i;
+	for(i=0; i<MAXIMUM_TASKS; i++)
+  86:	19 82       	std	Y+1, r1	; 0x01
+  88:	0d c0       	rjmp	.+26     	; 0xa4 <RTO_vidInit+0x28>
+	{
+		apstrTaskArray[i] = RTO_NULL;
+  8a:	89 81       	ldd	r24, Y+1	; 0x01
+  8c:	88 2f       	mov	r24, r24
+  8e:	90 e0       	ldi	r25, 0x00	; 0
+  90:	88 0f       	add	r24, r24
+  92:	99 1f       	adc	r25, r25
+  94:	fc 01       	movw	r30, r24
+  96:	ec 59       	subi	r30, 0x9C	; 156
+  98:	ff 4f       	sbci	r31, 0xFF	; 255
+  9a:	11 82       	std	Z+1, r1	; 0x01
+  9c:	10 82       	st	Z, r1
+
+
+void RTO_vidInit(void)
+{
+	u8 i;
+	for(i=0; i<MAXIMUM_TASKS; i++)
+  9e:	89 81       	ldd	r24, Y+1	; 0x01
+  a0:	8f 5f       	subi	r24, 0xFF	; 255
+  a2:	89 83       	std	Y+1, r24	; 0x01
+  a4:	89 81       	ldd	r24, Y+1	; 0x01
+  a6:	8e 31       	cpi	r24, 0x1E	; 30
+  a8:	80 f3       	brcs	.-32     	; 0x8a <RTO_vidInit+0xe>
+	{
+		apstrTaskArray[i] = RTO_NULL;
+	}
+
+	/* Set Overflow Call Back Function */
+	OVF_vidSetCB( TimerTick );
+  aa:	85 e0       	ldi	r24, 0x05	; 5
+  ac:	91 e0       	ldi	r25, 0x01	; 1
+  ae:	0e 94 9e 01 	call	0x33c	; 0x33c <OVF_vidSetCB>
+
+	/* Initialize Counter Register */
+	Timer0_vidSetCounterRegisterValue( 192 );
+  b2:	80 ec       	ldi	r24, 0xC0	; 192
+  b4:	0e 94 70 01 	call	0x2e0	; 0x2e0 <Timer0_vidSetCounterRegisterValue>
+
+	/* Initialize Timer_0 */
+	Timer0_vidInit();
+  b8:	0e 94 39 01 	call	0x272	; 0x272 <Timer0_vidInit>
+}
+  bc:	0f 90       	pop	r0
+  be:	cf 91       	pop	r28
+  c0:	df 91       	pop	r29
+  c2:	08 95       	ret
+
+000000c4 <RTO_vidCreateQueueOfTasks>:
+
+
+
+void RTO_vidCreateQueueOfTasks( Task_Type* TaskPointer , u8 Priorty_Of_Task)
+{
+  c4:	df 93       	push	r29
+  c6:	cf 93       	push	r28
+  c8:	00 d0       	rcall	.+0      	; 0xca <RTO_vidCreateQueueOfTasks+0x6>
+  ca:	0f 92       	push	r0
+  cc:	cd b7       	in	r28, 0x3d	; 61
+  ce:	de b7       	in	r29, 0x3e	; 62
+  d0:	9a 83       	std	Y+2, r25	; 0x02
+  d2:	89 83       	std	Y+1, r24	; 0x01
+  d4:	6b 83       	std	Y+3, r22	; 0x03
+	apstrTaskArray[ Priorty_Of_Task ] = TaskPointer ;
+  d6:	8b 81       	ldd	r24, Y+3	; 0x03
+  d8:	88 2f       	mov	r24, r24
+  da:	90 e0       	ldi	r25, 0x00	; 0
+  dc:	88 0f       	add	r24, r24
+  de:	99 1f       	adc	r25, r25
+  e0:	fc 01       	movw	r30, r24
+  e2:	ec 59       	subi	r30, 0x9C	; 156
+  e4:	ff 4f       	sbci	r31, 0xFF	; 255
+  e6:	89 81       	ldd	r24, Y+1	; 0x01
+  e8:	9a 81       	ldd	r25, Y+2	; 0x02
+  ea:	91 83       	std	Z+1, r25	; 0x01
+  ec:	80 83       	st	Z, r24
+}
+  ee:	0f 90       	pop	r0
+  f0:	0f 90       	pop	r0
+  f2:	0f 90       	pop	r0
+  f4:	cf 91       	pop	r28
+  f6:	df 91       	pop	r29
+  f8:	08 95       	ret
+
+000000fa <RTO_vidScheduler>:
+
+
+
+void RTO_vidScheduler(void)
+{
+  fa:	df 93       	push	r29
+  fc:	cf 93       	push	r28
+  fe:	0f 92       	push	r0
+ 100:	cd b7       	in	r28, 0x3d	; 61
+ 102:	de b7       	in	r29, 0x3e	; 62
+
+	u8 u8TaskCounter ;
+	for( u8TaskCounter = 0; u8TaskCounter < MAXIMUM_TASKS; u8TaskCounter++)
+ 104:	19 82       	std	Y+1, r1	; 0x01
+ 106:	79 c0       	rjmp	.+242    	; 0x1fa <RTO_vidScheduler+0x100>
+	{
+		if( apstrTaskArray[u8TaskCounter] != RTO_NULL )
+ 108:	89 81       	ldd	r24, Y+1	; 0x01
+ 10a:	88 2f       	mov	r24, r24
+ 10c:	90 e0       	ldi	r25, 0x00	; 0
+ 10e:	88 0f       	add	r24, r24
+ 110:	99 1f       	adc	r25, r25
+ 112:	fc 01       	movw	r30, r24
+ 114:	ec 59       	subi	r30, 0x9C	; 156
+ 116:	ff 4f       	sbci	r31, 0xFF	; 255
+ 118:	80 81       	ld	r24, Z
+ 11a:	91 81       	ldd	r25, Z+1	; 0x01
+ 11c:	00 97       	sbiw	r24, 0x00	; 0
+ 11e:	09 f4       	brne	.+2      	; 0x122 <RTO_vidScheduler+0x28>
+ 120:	69 c0       	rjmp	.+210    	; 0x1f4 <RTO_vidScheduler+0xfa>
+		{
+			if( apstrTaskArray[u8TaskCounter]->u8TaskState == TASK_RUNNING_STATE)
+ 122:	89 81       	ldd	r24, Y+1	; 0x01
+ 124:	88 2f       	mov	r24, r24
+ 126:	90 e0       	ldi	r25, 0x00	; 0
+ 128:	88 0f       	add	r24, r24
+ 12a:	99 1f       	adc	r25, r25
+ 12c:	fc 01       	movw	r30, r24
+ 12e:	ec 59       	subi	r30, 0x9C	; 156
+ 130:	ff 4f       	sbci	r31, 0xFF	; 255
+ 132:	01 90       	ld	r0, Z+
+ 134:	f0 81       	ld	r31, Z
+ 136:	e0 2d       	mov	r30, r0
+ 138:	82 85       	ldd	r24, Z+10	; 0x0a
+ 13a:	81 30       	cpi	r24, 0x01	; 1
+ 13c:	09 f0       	breq	.+2      	; 0x140 <RTO_vidScheduler+0x46>
+ 13e:	5a c0       	rjmp	.+180    	; 0x1f4 <RTO_vidScheduler+0xfa>
+			{
+				if( apstrTaskArray[u8TaskCounter]->u32FirstDelay == 0 )
+ 140:	89 81       	ldd	r24, Y+1	; 0x01
+ 142:	88 2f       	mov	r24, r24
+ 144:	90 e0       	ldi	r25, 0x00	; 0
+ 146:	88 0f       	add	r24, r24
+ 148:	99 1f       	adc	r25, r25
+ 14a:	fc 01       	movw	r30, r24
+ 14c:	ec 59       	subi	r30, 0x9C	; 156
+ 14e:	ff 4f       	sbci	r31, 0xFF	; 255
+ 150:	01 90       	ld	r0, Z+
+ 152:	f0 81       	ld	r31, Z
+ 154:	e0 2d       	mov	r30, r0
+ 156:	80 81       	ld	r24, Z
+ 158:	91 81       	ldd	r25, Z+1	; 0x01
+ 15a:	a2 81       	ldd	r26, Z+2	; 0x02
+ 15c:	b3 81       	ldd	r27, Z+3	; 0x03
+ 15e:	00 97       	sbiw	r24, 0x00	; 0
+ 160:	a1 05       	cpc	r26, r1
+ 162:	b1 05       	cpc	r27, r1
+ 164:	89 f5       	brne	.+98     	; 0x1c8 <RTO_vidScheduler+0xce>
+				{
+					apstrTaskArray[u8TaskCounter]->pfTaskCode();
+ 166:	89 81       	ldd	r24, Y+1	; 0x01
+ 168:	88 2f       	mov	r24, r24
+ 16a:	90 e0       	ldi	r25, 0x00	; 0
+ 16c:	88 0f       	add	r24, r24
+ 16e:	99 1f       	adc	r25, r25
+ 170:	fc 01       	movw	r30, r24
+ 172:	ec 59       	subi	r30, 0x9C	; 156
+ 174:	ff 4f       	sbci	r31, 0xFF	; 255
+ 176:	01 90       	ld	r0, Z+
+ 178:	f0 81       	ld	r31, Z
+ 17a:	e0 2d       	mov	r30, r0
+ 17c:	00 84       	ldd	r0, Z+8	; 0x08
+ 17e:	f1 85       	ldd	r31, Z+9	; 0x09
+ 180:	e0 2d       	mov	r30, r0
+ 182:	09 95       	icall
+					apstrTaskArray[u8TaskCounter]->u32FirstDelay = apstrTaskArray[u8TaskCounter]->u32Periodicity - 1;
+ 184:	89 81       	ldd	r24, Y+1	; 0x01
+ 186:	88 2f       	mov	r24, r24
+ 188:	90 e0       	ldi	r25, 0x00	; 0
+ 18a:	88 0f       	add	r24, r24
+ 18c:	99 1f       	adc	r25, r25
+ 18e:	fc 01       	movw	r30, r24
+ 190:	ec 59       	subi	r30, 0x9C	; 156
+ 192:	ff 4f       	sbci	r31, 0xFF	; 255
+ 194:	20 81       	ld	r18, Z
+ 196:	31 81       	ldd	r19, Z+1	; 0x01
+ 198:	89 81       	ldd	r24, Y+1	; 0x01
+ 19a:	88 2f       	mov	r24, r24
+ 19c:	90 e0       	ldi	r25, 0x00	; 0
+ 19e:	88 0f       	add	r24, r24
+ 1a0:	99 1f       	adc	r25, r25
+ 1a2:	fc 01       	movw	r30, r24
+ 1a4:	ec 59       	subi	r30, 0x9C	; 156
+ 1a6:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1a8:	01 90       	ld	r0, Z+
+ 1aa:	f0 81       	ld	r31, Z
+ 1ac:	e0 2d       	mov	r30, r0
+ 1ae:	84 81       	ldd	r24, Z+4	; 0x04
+ 1b0:	95 81       	ldd	r25, Z+5	; 0x05
+ 1b2:	a6 81       	ldd	r26, Z+6	; 0x06
+ 1b4:	b7 81       	ldd	r27, Z+7	; 0x07
+ 1b6:	01 97       	sbiw	r24, 0x01	; 1
+ 1b8:	a1 09       	sbc	r26, r1
+ 1ba:	b1 09       	sbc	r27, r1
+ 1bc:	f9 01       	movw	r30, r18
+ 1be:	80 83       	st	Z, r24
+ 1c0:	91 83       	std	Z+1, r25	; 0x01
+ 1c2:	a2 83       	std	Z+2, r26	; 0x02
+ 1c4:	b3 83       	std	Z+3, r27	; 0x03
+ 1c6:	16 c0       	rjmp	.+44     	; 0x1f4 <RTO_vidScheduler+0xfa>
+				}
+				else
+				{
+					apstrTaskArray[u8TaskCounter]->u32FirstDelay--;
+ 1c8:	89 81       	ldd	r24, Y+1	; 0x01
+ 1ca:	88 2f       	mov	r24, r24
+ 1cc:	90 e0       	ldi	r25, 0x00	; 0
+ 1ce:	88 0f       	add	r24, r24
+ 1d0:	99 1f       	adc	r25, r25
+ 1d2:	fc 01       	movw	r30, r24
+ 1d4:	ec 59       	subi	r30, 0x9C	; 156
+ 1d6:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1d8:	01 90       	ld	r0, Z+
+ 1da:	f0 81       	ld	r31, Z
+ 1dc:	e0 2d       	mov	r30, r0
+ 1de:	80 81       	ld	r24, Z
+ 1e0:	91 81       	ldd	r25, Z+1	; 0x01
+ 1e2:	a2 81       	ldd	r26, Z+2	; 0x02
+ 1e4:	b3 81       	ldd	r27, Z+3	; 0x03
+ 1e6:	01 97       	sbiw	r24, 0x01	; 1
+ 1e8:	a1 09       	sbc	r26, r1
+ 1ea:	b1 09       	sbc	r27, r1
+ 1ec:	80 83       	st	Z, r24
+ 1ee:	91 83       	std	Z+1, r25	; 0x01
+ 1f0:	a2 83       	std	Z+2, r26	; 0x02
+ 1f2:	b3 83       	std	Z+3, r27	; 0x03
+
+void RTO_vidScheduler(void)
+{
+
+	u8 u8TaskCounter ;
+	for( u8TaskCounter = 0; u8TaskCounter < MAXIMUM_TASKS; u8TaskCounter++)
+ 1f4:	89 81       	ldd	r24, Y+1	; 0x01
+ 1f6:	8f 5f       	subi	r24, 0xFF	; 255
+ 1f8:	89 83       	std	Y+1, r24	; 0x01
+ 1fa:	89 81       	ldd	r24, Y+1	; 0x01
+ 1fc:	8e 31       	cpi	r24, 0x1E	; 30
+ 1fe:	08 f4       	brcc	.+2      	; 0x202 <RTO_vidScheduler+0x108>
+ 200:	83 cf       	rjmp	.-250    	; 0x108 <RTO_vidScheduler+0xe>
+				}
+			}
+
+		}
+	}
+}
+ 202:	0f 90       	pop	r0
+ 204:	cf 91       	pop	r28
+ 206:	df 91       	pop	r29
+ 208:	08 95       	ret
+
+0000020a <TimerTick>:
+
+
+
+void TimerTick(void)
+{
+ 20a:	df 93       	push	r29
+ 20c:	cf 93       	push	r28
+ 20e:	cd b7       	in	r28, 0x3d	; 61
+ 210:	de b7       	in	r29, 0x3e	; 62
+	Ovf_Count ++;
+ 212:	80 91 60 00 	lds	r24, 0x0060
+ 216:	90 91 61 00 	lds	r25, 0x0061
+ 21a:	a0 91 62 00 	lds	r26, 0x0062
+ 21e:	b0 91 63 00 	lds	r27, 0x0063
+ 222:	01 96       	adiw	r24, 0x01	; 1
+ 224:	a1 1d       	adc	r26, r1
+ 226:	b1 1d       	adc	r27, r1
+ 228:	80 93 60 00 	sts	0x0060, r24
+ 22c:	90 93 61 00 	sts	0x0061, r25
+ 230:	a0 93 62 00 	sts	0x0062, r26
+ 234:	b0 93 63 00 	sts	0x0063, r27
+
+	/* 32 overflow Mean 1msec -> (1 Tick) */
+
+	if( Ovf_Count == 32 )
+ 238:	80 91 60 00 	lds	r24, 0x0060
+ 23c:	90 91 61 00 	lds	r25, 0x0061
+ 240:	a0 91 62 00 	lds	r26, 0x0062
+ 244:	b0 91 63 00 	lds	r27, 0x0063
+ 248:	80 32       	cpi	r24, 0x20	; 32
+ 24a:	91 05       	cpc	r25, r1
+ 24c:	a1 05       	cpc	r26, r1
+ 24e:	b1 05       	cpc	r27, r1
+ 250:	69 f4       	brne	.+26     	; 0x26c <TimerTick+0x62>
+	{
+		/* Reinitialize Overflow Counter */
+		Ovf_Count = 0;
+ 252:	10 92 60 00 	sts	0x0060, r1
+ 256:	10 92 61 00 	sts	0x0061, r1
+ 25a:	10 92 62 00 	sts	0x0062, r1
+ 25e:	10 92 63 00 	sts	0x0063, r1
+
+		/* Initialize Counter Register */
+		Timer0_vidSetCounterRegisterValue( 192 );
+ 262:	80 ec       	ldi	r24, 0xC0	; 192
+ 264:	0e 94 70 01 	call	0x2e0	; 0x2e0 <Timer0_vidSetCounterRegisterValue>
+
+		/* Scheduler Will Excute Every 1msec  */
+		RTO_vidScheduler();
+ 268:	0e 94 7d 00 	call	0xfa	; 0xfa <RTO_vidScheduler>
+	}
+
+}
+ 26c:	cf 91       	pop	r28
+ 26e:	df 91       	pop	r29
+ 270:	08 95       	ret
+
+00000272 <Timer0_vidInit>:
+
+void(*Pfun_OVF)(void);
+void(*Pfun_CMP)(void);
+
+void Timer0_vidInit(void)
+{
+ 272:	df 93       	push	r29
+ 274:	cf 93       	push	r28
+ 276:	cd b7       	in	r28, 0x3d	; 61
+ 278:	de b7       	in	r29, 0x3e	; 62
+#if TIMER0_u8WFG_MODE == TIMER0_u8NORMAL_MODE
+	//Select Normal Mode
+	TCCR0.Bits.WGM00 = 0;
+ 27a:	e3 e5       	ldi	r30, 0x53	; 83
+ 27c:	f0 e0       	ldi	r31, 0x00	; 0
+ 27e:	80 81       	ld	r24, Z
+ 280:	8f 7b       	andi	r24, 0xBF	; 191
+ 282:	80 83       	st	Z, r24
+	TCCR0.Bits.WGM01 = 0;
+ 284:	e3 e5       	ldi	r30, 0x53	; 83
+ 286:	f0 e0       	ldi	r31, 0x00	; 0
+ 288:	80 81       	ld	r24, Z
+ 28a:	87 7f       	andi	r24, 0xF7	; 247
+ 28c:	80 83       	st	Z, r24
+#endif
+
+
+#if TIMER0_u8COMPARE_MATCH_OUTPUT_MODE == TIMER0_u8OC0_DISCONNECTED
+	//Select OCR0 disconnected (NO_COMPARE_MATCH)
+	TCCR0.Bits.COM = 0;
+ 28e:	e3 e5       	ldi	r30, 0x53	; 83
+ 290:	f0 e0       	ldi	r31, 0x00	; 0
+ 292:	80 81       	ld	r24, Z
+ 294:	8f 7c       	andi	r24, 0xCF	; 207
+ 296:	80 83       	st	Z, r24
+	TCCR0.Bits.COM = 3;
+#endif
+
+#if TIMER0_u8PRESCALLER_VALU == TIMER0_u8FCPU_1
+	//Select No Pre_scalling
+	TCCR0.Bits.CS = 1;
+ 298:	e3 e5       	ldi	r30, 0x53	; 83
+ 29a:	f0 e0       	ldi	r31, 0x00	; 0
+ 29c:	80 81       	ld	r24, Z
+ 29e:	88 7f       	andi	r24, 0xF8	; 248
+ 2a0:	81 60       	ori	r24, 0x01	; 1
+ 2a2:	80 83       	st	Z, r24
+	TCCR0.Bits.CS = 7;
+#endif
+
+#if TIMER0_u8OVF_INTERRUPT == TIMER0_u8OVF_INTERRUPT_ENABLE
+	//PIE of TIMER0 at overflow of counter register
+	SREG.Bits.I_bit  =  1;
+ 2a4:	ef e5       	ldi	r30, 0x5F	; 95
+ 2a6:	f0 e0       	ldi	r31, 0x00	; 0
+ 2a8:	80 81       	ld	r24, Z
+ 2aa:	80 68       	ori	r24, 0x80	; 128
+ 2ac:	80 83       	st	Z, r24
+	TIMSK.Bits.TOIE0 =  1;
+ 2ae:	e9 e5       	ldi	r30, 0x59	; 89
+ 2b0:	f0 e0       	ldi	r31, 0x00	; 0
+ 2b2:	80 81       	ld	r24, Z
+ 2b4:	81 60       	ori	r24, 0x01	; 1
+ 2b6:	80 83       	st	Z, r24
+	//PIE of TIMER0 at Compare Match Output Register
+	SREG.Bits.I_bit  =  1;
+	TIMSK.Bits.OCIE0 =  1;
+#elif TIMER0_u8CMP_INTERRUPT == TIMER0_u8CMP_INTERRUPT_DISABLE
+	//disable interrupt timer0 at Compare Match Output Register
+	TIMSK.Bits.OCIE0 =  0;
+ 2b8:	e9 e5       	ldi	r30, 0x59	; 89
+ 2ba:	f0 e0       	ldi	r31, 0x00	; 0
+ 2bc:	80 81       	ld	r24, Z
+ 2be:	8d 7f       	andi	r24, 0xFD	; 253
+ 2c0:	80 83       	st	Z, r24
+#endif
+}
+ 2c2:	cf 91       	pop	r28
+ 2c4:	df 91       	pop	r29
+ 2c6:	08 95       	ret
+
+000002c8 <Timer0_vidStopTimer>:
+
+void Timer0_vidStopTimer(void)
+{
+ 2c8:	df 93       	push	r29
+ 2ca:	cf 93       	push	r28
+ 2cc:	cd b7       	in	r28, 0x3d	; 61
+ 2ce:	de b7       	in	r29, 0x3e	; 62
+	//Stop Timer (NO Clock Source)
+	TCCR0.Bits.CS = 0;
+ 2d0:	e3 e5       	ldi	r30, 0x53	; 83
+ 2d2:	f0 e0       	ldi	r31, 0x00	; 0
+ 2d4:	80 81       	ld	r24, Z
+ 2d6:	88 7f       	andi	r24, 0xF8	; 248
+ 2d8:	80 83       	st	Z, r24
+}
+ 2da:	cf 91       	pop	r28
+ 2dc:	df 91       	pop	r29
+ 2de:	08 95       	ret
+
+000002e0 <Timer0_vidSetCounterRegisterValue>:
+
+void Timer0_vidSetCounterRegisterValue(u8 Val)
+{
+ 2e0:	df 93       	push	r29
+ 2e2:	cf 93       	push	r28
+ 2e4:	0f 92       	push	r0
+ 2e6:	cd b7       	in	r28, 0x3d	; 61
+ 2e8:	de b7       	in	r29, 0x3e	; 62
+ 2ea:	89 83       	std	Y+1, r24	; 0x01
+	//Set Value In Timer Counter Register	 (TCNT0)
+	TCNT0.Byte = Val;
+ 2ec:	e2 e5       	ldi	r30, 0x52	; 82
+ 2ee:	f0 e0       	ldi	r31, 0x00	; 0
+ 2f0:	89 81       	ldd	r24, Y+1	; 0x01
+ 2f2:	80 83       	st	Z, r24
+}
+ 2f4:	0f 90       	pop	r0
+ 2f6:	cf 91       	pop	r28
+ 2f8:	df 91       	pop	r29
+ 2fa:	08 95       	ret
+
+000002fc <Timer0_vidSetCompareRegisterValue>:
+
+void Timer0_vidSetCompareRegisterValue(u8 Val)
+{
+ 2fc:	df 93       	push	r29
+ 2fe:	cf 93       	push	r28
+ 300:	0f 92       	push	r0
+ 302:	cd b7       	in	r28, 0x3d	; 61
+ 304:	de b7       	in	r29, 0x3e	; 62
+ 306:	89 83       	std	Y+1, r24	; 0x01
+	//Set Value Of Timer Compare Match Register (OCR0)
+	OCR0.Byte = Val;
+ 308:	ec e5       	ldi	r30, 0x5C	; 92
+ 30a:	f0 e0       	ldi	r31, 0x00	; 0
+ 30c:	89 81       	ldd	r24, Y+1	; 0x01
+ 30e:	80 83       	st	Z, r24
+}
+ 310:	0f 90       	pop	r0
+ 312:	cf 91       	pop	r28
+ 314:	df 91       	pop	r29
+ 316:	08 95       	ret
+
+00000318 <CMP_vidSetCB>:
+
+
+void CMP_vidSetCB(void(*pf)(void))
+{
+ 318:	df 93       	push	r29
+ 31a:	cf 93       	push	r28
+ 31c:	00 d0       	rcall	.+0      	; 0x31e <CMP_vidSetCB+0x6>
+ 31e:	cd b7       	in	r28, 0x3d	; 61
+ 320:	de b7       	in	r29, 0x3e	; 62
+ 322:	9a 83       	std	Y+2, r25	; 0x02
+ 324:	89 83       	std	Y+1, r24	; 0x01
+	Pfun_CMP = pf;
+ 326:	89 81       	ldd	r24, Y+1	; 0x01
+ 328:	9a 81       	ldd	r25, Y+2	; 0x02
+ 32a:	90 93 a1 00 	sts	0x00A1, r25
+ 32e:	80 93 a0 00 	sts	0x00A0, r24
+}
+ 332:	0f 90       	pop	r0
+ 334:	0f 90       	pop	r0
+ 336:	cf 91       	pop	r28
+ 338:	df 91       	pop	r29
+ 33a:	08 95       	ret
+
+0000033c <OVF_vidSetCB>:
+
+
+void OVF_vidSetCB(void(*pf)(void))
+{
+ 33c:	df 93       	push	r29
+ 33e:	cf 93       	push	r28
+ 340:	00 d0       	rcall	.+0      	; 0x342 <OVF_vidSetCB+0x6>
+ 342:	cd b7       	in	r28, 0x3d	; 61
+ 344:	de b7       	in	r29, 0x3e	; 62
+ 346:	9a 83       	std	Y+2, r25	; 0x02
+ 348:	89 83       	std	Y+1, r24	; 0x01
+	Pfun_OVF = pf;
+ 34a:	89 81       	ldd	r24, Y+1	; 0x01
+ 34c:	9a 81       	ldd	r25, Y+2	; 0x02
+ 34e:	90 93 a3 00 	sts	0x00A3, r25
+ 352:	80 93 a2 00 	sts	0x00A2, r24
+}
+ 356:	0f 90       	pop	r0
+ 358:	0f 90       	pop	r0
+ 35a:	cf 91       	pop	r28
+ 35c:	df 91       	pop	r29
+ 35e:	08 95       	ret
+
+00000360 <__vector_10>:
+
+
+void __vector_10 (void)
+{
+ 360:	1f 92       	push	r1
+ 362:	0f 92       	push	r0
+ 364:	0f b6       	in	r0, 0x3f	; 63
+ 366:	0f 92       	push	r0
+ 368:	11 24       	eor	r1, r1
+ 36a:	2f 93       	push	r18
+ 36c:	3f 93       	push	r19
+ 36e:	4f 93       	push	r20
+ 370:	5f 93       	push	r21
+ 372:	6f 93       	push	r22
+ 374:	7f 93       	push	r23
+ 376:	8f 93       	push	r24
+ 378:	9f 93       	push	r25
+ 37a:	af 93       	push	r26
+ 37c:	bf 93       	push	r27
+ 37e:	ef 93       	push	r30
+ 380:	ff 93       	push	r31
+ 382:	df 93       	push	r29
+ 384:	cf 93       	push	r28
+ 386:	cd b7       	in	r28, 0x3d	; 61
+ 388:	de b7       	in	r29, 0x3e	; 62
+	Pfun_CMP();
+ 38a:	e0 91 a0 00 	lds	r30, 0x00A0
+ 38e:	f0 91 a1 00 	lds	r31, 0x00A1
+ 392:	09 95       	icall
+}
+ 394:	cf 91       	pop	r28
+ 396:	df 91       	pop	r29
+ 398:	ff 91       	pop	r31
+ 39a:	ef 91       	pop	r30
+ 39c:	bf 91       	pop	r27
+ 39e:	af 91       	pop	r26
+ 3a0:	9f 91       	pop	r25
+ 3a2:	8f 91       	pop	r24
+ 3a4:	7f 91       	pop	r23
+ 3a6:	6f 91       	pop	r22
+ 3a8:	5f 91       	pop	r21
+ 3aa:	4f 91       	pop	r20
+ 3ac:	3f 91       	pop	r19
+ 3ae:	2f 91       	pop	r18
+ 3b0:	0f 90       	pop	r0
+ 3b2:	0f be       	out	0x3f, r0	; 63
+ 3b4:	0f 90       	pop	r0
+ 3b6:	1f 90       	pop	r1
+ 3b8:	18 95       	reti
+
+000003ba <__vector_11>:
+
+void __vector_11 (void)
+{
+ 3ba:	1f 92       	push	r1
+ 3bc:	0f 92       	push	r0
+ 3be:	0f b6       	in	r0, 0x3f	; 63
+ 3c0:	0f 92       	push	r0
+ 3c2:	11 24       	eor	r1, r1
+ 3c4:	2f 93       	push	r18
+ 3c6:	3f 93       	push	r19
+ 3c8:	4f 93       	push	r20
+ 3ca:	5f 93       	push	r21
+ 3cc:	6f 93       	push	r22
+ 3ce:	7f 93       	push	r23
+ 3d0:	8f 93       	push	r24
+ 3d2:	9f 93       	push	r25
+ 3d4:	af 93       	push	r26
+ 3d6:	bf 93       	push	r27
+ 3d8:	ef 93       	push	r30
+ 3da:	ff 93       	push	r31
+ 3dc:	df 93       	push	r29
+ 3de:	cf 93       	push	r28
+ 3e0:	cd b7       	in	r28, 0x3d	; 61
+ 3e2:	de b7       	in	r29, 0x3e	; 62
+	Pfun_OVF();
+ 3e4:	e0 91 a2 00 	lds	r30, 0x00A2
+ 3e8:	f0 91 a3 00 	lds	r31, 0x00A3
+ 3ec:	09 95       	icall
+}
+ 3ee:	cf 91       	pop	r28
+ 3f0:	df 91       	pop	r29
+ 3f2:	ff 91       	pop	r31
+ 3f4:	ef 91       	pop	r30
+ 3f6:	bf 91       	pop	r27
+ 3f8:	af 91       	pop	r26
+ 3fa:	9f 91       	pop	r25
+ 3fc:	8f 91       	pop	r24
+ 3fe:	7f 91       	pop	r23
+ 400:	6f 91       	pop	r22
+ 402:	5f 91       	pop	r21
+ 404:	4f 91       	pop	r20
+ 406:	3f 91       	pop	r19
+ 408:	2f 91       	pop	r18
+ 40a:	0f 90       	pop	r0
+ 40c:	0f be       	out	0x3f, r0	; 63
+ 40e:	0f 90       	pop	r0
+ 410:	1f 90       	pop	r1
+ 412:	18 95       	reti
+
+00000414 <main>:
+ *      Author: zas
+ */
+
+
+int main(void)
+{
+ 414:	df 93       	push	r29
+ 416:	cf 93       	push	r28
+ 418:	cd b7       	in	r28, 0x3d	; 61
+ 41a:	de b7       	in	r29, 0x3e	; 62
+
+return 0;
+ 41c:	80 e0       	ldi	r24, 0x00	; 0
+ 41e:	90 e0       	ldi	r25, 0x00	; 0
+}
+ 420:	cf 91       	pop	r28
+ 422:	df 91       	pop	r29
+ 424:	08 95       	ret
+
+00000426 <_exit>:
+ 426:	f8 94       	cli
+
+00000428 <__stop_program>:
+ 428:	ff cf       	rjmp	.-2      	; 0x428 <__stop_program>
