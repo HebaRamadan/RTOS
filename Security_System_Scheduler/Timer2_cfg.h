@@ -13,8 +13,8 @@
 #define TIMER2_u8FAST_PWM_MODE               3
 
 
-#define TIMER2_u8OC2_DISCONNECTED 	  1
-#define TIMER2_u8TOGGLE_OC2_ON_CM   	2
+#define TIMER2_u8OC2_DISCONNECTED 	    1
+#define TIMER2_u8TOGGLE_OC2_ON_CM   	  2
 #define TIMER2_u8CLEAR_OC2_ON_CM             3
 #define TIMER2_u8SET_OC2_ON_CM               4
 #define TIMER2_u8CLEAR_OC2_ON_CM_SET_ON_TOP  5
